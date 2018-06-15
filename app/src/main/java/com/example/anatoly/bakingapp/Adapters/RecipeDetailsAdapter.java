@@ -1,6 +1,9 @@
 package com.example.anatoly.bakingapp.Adapters;
 
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +15,21 @@ import com.example.anatoly.bakingapp.Model.Recipe;
 import com.example.anatoly.bakingapp.Model.Step;
 import com.example.anatoly.bakingapp.R;
 import com.example.anatoly.bakingapp.RecyclerViewOnClickListener;
+import com.example.anatoly.bakingapp.SelectableRecyclerViewAdapter;
 
-public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+/**
+ * Method of highlighting selected item got here:
+ * https://stackoverflow.com/questions/27194044/how-to-properly-highlight-selected-item-on-recyclerview
+ */
+public class RecipeDetailsAdapter extends SelectableRecyclerViewAdapter<RecyclerView.ViewHolder>{
 
     private static final int VIEWTYPE_INGREDIENTS=0;
     private static final int VIEWTYPE_STEP=1;
 
     private Recipe recipe;
 
-    RecyclerViewOnClickListener listener;
+    private RecyclerViewOnClickListener listener;
 
     public RecipeDetailsAdapter(Recipe recipe) {
         this.recipe = recipe;
@@ -28,6 +37,12 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void setListener(RecyclerViewOnClickListener listener) {
         this.listener = listener;
+    }
+
+
+    @Override
+    public boolean isSelectable() {
+        return true;
     }
 
     @NonNull
@@ -46,23 +61,28 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         switch (getItemViewType(position)){
             case VIEWTYPE_INGREDIENTS:
                 IngredientsViewHolder ingHolder = (IngredientsViewHolder) holder;
-                ingHolder.tvIngredients.setText(Ingredient.getIngredientsList(recipe.getmIngredients()));
+                ingHolder.tvIngredients.setText(Ingredient.getIngredientsList(recipe.getIngredients()));
                 break;
             case VIEWTYPE_STEP:
                 StepViewHolder stepHolder = (StepViewHolder) holder;
-                Step step = recipe.getmSteps().get(position-1);
-                stepHolder.tvStepName.setText(step.getmShortDescription());
-                stepHolder.tvStepNumber.setText(String.valueOf(position+"."));
+                Step step = recipe.getSteps().get(position-1);
+                stepHolder.tvStepName.setText(step.getShortDescription());
+                if(position>1) {
+                    stepHolder.tvStepNumber.setText(String.valueOf(position - 1 + "."));
+                } else {
+                    stepHolder.tvStepNumber.setText("");
+                }
                 break;
         }
     }
 
     @Override
     public int getItemCount() {
-        return recipe.getmSteps().size()+1;
+        return recipe.getSteps().size()+1;
     }
 
     @Override
@@ -74,7 +94,14 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    class StepViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public void itemClicked(int position) {
+        if(listener!=null){
+            listener.itemClicked(position);
+        }
+    }
+
+    class StepViewHolder extends SelectableViewHolder{
         TextView tvStepName;
         TextView tvStepNumber;
 
@@ -82,14 +109,6 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(itemView);
             tvStepName = itemView.findViewById(R.id.tv_step_name);
             tvStepNumber = itemView.findViewById(R.id.tv_step_number);
-            tvStepName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(listener!=null){
-                        listener.itemClicked(getAdapterPosition());
-                    }
-                }
-            });
         }
     }
 
@@ -102,8 +121,5 @@ public class RecipeDetailsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
 
     }
-
-
-
 
 }

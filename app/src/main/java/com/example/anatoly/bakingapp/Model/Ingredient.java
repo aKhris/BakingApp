@@ -9,27 +9,15 @@ public class Ingredient implements Serializable {
     private String mMeasure;
     private String mIngredient;
 
-    public int getmQuantity() {
-        return mQuantity;
-    }
-
-    public void setmQuantity(int mQuantity) {
+    public void setQuantity(int mQuantity) {
         this.mQuantity = mQuantity;
     }
 
-    public String getmMeasure() {
-        return mMeasure;
-    }
-
-    public void setmMeasure(String mMeasure) {
+    public void setMeasure(String mMeasure) {
         this.mMeasure = mMeasure;
     }
 
-    public String getmIngredient() {
-        return mIngredient;
-    }
-
-    public void setmIngredient(String mIngredient) {
+    public void setIngredient(String mIngredient) {
         this.mIngredient = mIngredient;
     }
 
@@ -43,10 +31,10 @@ public class Ingredient implements Serializable {
     }
 
     public static String getIngredientsList(List<Ingredient> ingredients){
-        String result ="";
+        StringBuilder result = new StringBuilder();
         for (Ingredient ing:ingredients
              ) {
-            result+=ing.toString()+"\n";
+            result.append(ing.toString()).append("\n");
         }
 
         return result.substring(0, result.length()-1);  //removing the last "\n" character

@@ -11,21 +11,42 @@ import android.widget.TextView;
 import com.example.anatoly.bakingapp.Model.Recipe;
 import com.example.anatoly.bakingapp.R;
 import com.example.anatoly.bakingapp.RecyclerViewOnClickListener;
+import com.example.anatoly.bakingapp.SelectableRecyclerViewAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.RecipeViewHolder> {
+public class RecipesListAdapter extends SelectableRecyclerViewAdapter<RecyclerView.ViewHolder>{
 
-    List<Recipe> recipes;
-    RecyclerViewOnClickListener listener;
+    private List<Recipe> recipes;
+    private RecyclerViewOnClickListener listener;
+    private boolean isSelectable=false;
 
-    public RecipesListAdapter(List<Recipe> recipes) {
+
+    public RecipesListAdapter(List<Recipe> recipes, boolean isSelectable) {
         this.recipes = recipes;
+        this.isSelectable = isSelectable;
     }
 
     public void setListener(RecyclerViewOnClickListener listener) {
         this.listener = listener;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public boolean isSelectable() {
+        return isSelectable;
+    }
+
+    @Override
+    public void itemClicked(int position) {
+        if(listener!=null){
+            listener.itemClicked(position);
+        }
     }
 
     @NonNull
@@ -36,12 +57,15 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        super.onBindViewHolder(viewHolder, position);
         Recipe recipe = recipes.get(position);
-        holder.tvRecipeName.setText(recipe.getmName());
-        if(recipe.getmImageUrl().length()>0) {
+        if(!(viewHolder instanceof RecipeViewHolder)){return;}
+        RecipeViewHolder holder = (RecipeViewHolder)viewHolder;
+        holder.tvRecipeName.setText(recipe.getName());
+        if(recipe.getImageUrl().length()>0) {
             Picasso.get()
-                    .load(recipe.getmImageUrl())
+                    .load(recipe.getImageUrl())
                     .into(holder.ivRecipeImage);
         }
     }
@@ -54,7 +78,7 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
 
 
 
-    class RecipeViewHolder extends RecyclerView.ViewHolder{
+    class RecipeViewHolder extends SelectableViewHolder{
         ImageView ivRecipeImage;
         TextView tvRecipeName;
 
@@ -62,14 +86,6 @@ public class RecipesListAdapter extends RecyclerView.Adapter<RecipesListAdapter.
             super(itemView);
             ivRecipeImage = itemView.findViewById(R.id.iv_recipe_image);
             tvRecipeName = itemView.findViewById(R.id.tv_recipe_name);
-            tvRecipeName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(listener!=null){
-                        listener.itemClicked(getAdapterPosition());
-                    }
-                }
-            });
         }
     }
 

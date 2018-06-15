@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Recipe implements Serializable{
+    public static final int INVALID_ID=-1;
+
     private int mId;
     private String mName;
     private List<Ingredient> mIngredients;
@@ -11,51 +13,51 @@ public class Recipe implements Serializable{
     private int mServings;
     private String mImageUrl;
 
-    public int getmId() {
+    public int getId() {
         return mId;
     }
 
-    public void setmId(int mId) {
+    public void setId(int mId) {
         this.mId = mId;
     }
 
-    public String getmName() {
+    public String getName() {
         return mName;
     }
 
-    public void setmName(String mName) {
+    public void setName(String mName) {
         this.mName = mName;
     }
 
-    public List<Ingredient> getmIngredients() {
+    public List<Ingredient> getIngredients() {
         return mIngredients;
     }
 
-    public void setmIngredients(List<Ingredient> mIngredients) {
+    public void setIngredients(List<Ingredient> mIngredients) {
         this.mIngredients = mIngredients;
     }
 
-    public List<Step> getmSteps() {
+    public List<Step> getSteps() {
         return mSteps;
     }
 
-    public void setmSteps(List<Step> mSteps) {
+    public void setSteps(List<Step> mSteps) {
         this.mSteps = mSteps;
     }
 
-    public int getmServings() {
+    public int getServings() {
         return mServings;
     }
 
-    public void setmServings(int mServings) {
+    public void setServings(int mServings) {
         this.mServings = mServings;
     }
 
-    public String getmImageUrl() {
+    public String getImageUrl() {
         return mImageUrl;
     }
 
-    public void setmImageUrl(String mImageUrl) {
+    public void setImageUrl(String mImageUrl) {
         this.mImageUrl = mImageUrl;
     }
 }

@@ -1,25 +1,23 @@
 package com.example.anatoly.bakingapp;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.anatoly.bakingapp.Model.Recipe;
-import com.example.anatoly.bakingapp.Model.Step;
 
 public class RecipeDetailsActivity extends VideoFullscreenActivity
-        implements RecipeDetailsFragment.SelectStepListener,
-        StepDetailsFragment.SetStepListener
+        implements RecipeDetailsFragment.SelectStepListener
 {
 
     public static final String ARG_RECIPE = "recipe";
 //    private static final String BUNDLE_RECIPE = "recipe";
     private static final String RECIPE_DETAILS_FRAGMENT_TAG = "recipe_details_fragment";
+    private static final String STEP_DETAILS_FRAGMENT_TAG = "step_details_fragment";
+
+    private Recipe recipe;
 
     FrameLayout stepDetailsContainer;
 
@@ -32,7 +30,7 @@ public class RecipeDetailsActivity extends VideoFullscreenActivity
         stepDetailsContainer = findViewById(R.id.fl_step_details_container);
         RecipeDetailsFragment recipeDetailsFragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Recipe recipe = (Recipe) getIntent().getSerializableExtra(ARG_RECIPE);
+        recipe = (Recipe) getIntent().getSerializableExtra(ARG_RECIPE);
         if (savedInstanceState==null && findViewById(R.id.fl_recipe_details_container)!=null){
             recipeDetailsFragment = new RecipeDetailsFragment();
             recipeDetailsFragment.setRecipe(recipe);
@@ -41,9 +39,9 @@ public class RecipeDetailsActivity extends VideoFullscreenActivity
                     .replace(R.id.fl_recipe_details_container, recipeDetailsFragment, RECIPE_DETAILS_FRAGMENT_TAG)
                     .commit();
         }
-        if(isTablet()){
-            stepSelected(recipe.getmSteps().get(0));    //Load first step fragment on the right side if it's a tablet
-        }
+//        if(isTablet()){
+//            stepSelected(recipe.getSteps().get(0));    //Load first step fragment on the right side if it's a tablet
+//        }
 
     }
 
@@ -59,27 +57,32 @@ public class RecipeDetailsActivity extends VideoFullscreenActivity
 //    }
 
     @Override
-    public void stepSelected(Step step) {
-        Toast.makeText(this, step.getmDescription(), Toast.LENGTH_SHORT).show();
+    public void stepSelected(int stepIndex) {
+        Toast.makeText(this, recipe.getSteps().get(stepIndex).getDescription(), Toast.LENGTH_SHORT).show();
         App.getApp().releasePlayer();
         if(isTablet()){     //use container to reload fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
-            StepDetailsFragment stepDetailsFragment = new StepDetailsFragment();
-            stepDetailsFragment.setStep(step);
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fl_step_details_container, stepDetailsFragment)
-                    .commit();
+            StepDetailsFragment stepDetailsFragment = (StepDetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
+            if(stepDetailsFragment==null){
+                stepDetailsFragment = new StepDetailsFragment();
+                stepDetailsFragment.setParameters(recipe, stepIndex);
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fl_step_details_container, stepDetailsFragment)
+                        .commit();
+            } else {
+                stepDetailsFragment.setParameters(recipe, stepIndex);
+                stepDetailsFragment.refreshViews();
+            }
+
+
 
         } else {            //use intent to start new StepDetailsActivity
             Intent intent = new Intent (this, StepDetailsActivity.class);
-            intent.putExtra(StepDetailsActivity.ARG_STEP, step);
+            intent.putExtra(StepDetailsActivity.ARG_RECIPE, recipe);
+            intent.putExtra(StepDetailsActivity.ARG_STEP_INDEX, stepIndex);
             startActivity(intent);
         }
     }
 
-    @Override
-    public void setStep(boolean isNext) {
-
-    }
 }

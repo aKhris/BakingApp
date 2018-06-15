@@ -23,14 +23,13 @@ import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 import static android.view.WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 
 public class StepDetailsActivity extends VideoFullscreenActivity
-    implements StepDetailsFragment.SetStepListener
          {
 
     //String tag for fragment
     private static final String STEP_DETAILS_FRAGMENT_TAG = "step_details_fragment";
 
     //String key for Step instance stored in calling intent
-    public static final String ARG_STEP = "step";
+
     public static final String ARG_RECIPE = "recipe";
     public static final String ARG_STEP_INDEX = "step_index";
     public static final String BUNDLE_STEP_INDEX = "step_index";
@@ -64,7 +63,7 @@ public class StepDetailsActivity extends VideoFullscreenActivity
         stepDetailsFragment = (StepDetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
         if(stepDetailsFragment==null){
             stepDetailsFragment = new StepDetailsFragment();
-            stepDetailsFragment.setStep(recipe.getmSteps().get(stepIndex));
+            stepDetailsFragment.setParameters(recipe, stepIndex);
                         fragmentManager
                     .beginTransaction()
                     .replace(R.id.fl_step_details_container, stepDetailsFragment, STEP_DETAILS_FRAGMENT_TAG)
@@ -97,20 +96,4 @@ public class StepDetailsActivity extends VideoFullscreenActivity
                  outState.putInt(BUNDLE_STEP_INDEX, stepIndex);
              }
 
-             // TODO: 13.06.18 Нарисовать схему фрагментов и активностей
-             // и внедрить смену шага
-
-             @Override
-             public void setStep(boolean isNext) {
-                int stepCount = recipe.getmSteps().size();
-                stepIndex = isNext? stepIndex+1 : stepIndex-1;
-                if(stepIndex>stepCount-1){stepIndex=0;}
-                else if (stepIndex<0){stepIndex = stepCount-1;}
-                stepDetailsFragment.setStep(recipe.getmSteps().get(stepIndex));
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .detach(stepDetailsFragment)
-                        .attach(stepDetailsFragment)
-                        .commit();
-             }
          }

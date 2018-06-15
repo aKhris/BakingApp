@@ -54,4 +54,6 @@ public class App extends Application {
             mExoPlayer = null;
         }
     }
+
+
 }

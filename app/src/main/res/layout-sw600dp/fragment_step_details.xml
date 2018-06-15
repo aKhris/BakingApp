@@ -17,13 +17,13 @@
             android:layout_height="match_parent"
             />
     </FrameLayout>
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5"
-        />
+<android.support.constraint.Guideline
+    android:id="@+id/guideline"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.5"
+    />
     <ScrollView android:layout_width="match_parent"
         android:layout_height="0dp"
         xmlns:android="http://schemas.android.com/apk/res/android"

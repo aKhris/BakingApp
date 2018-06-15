@@ -9,43 +9,43 @@ public class Step implements Serializable {
     private String mVideoUrl;
     private String mThumbnailUrl;
 
-    public int getmId() {
+    public int getId() {
         return mId;
     }
 
-    public void setmId(int mId) {
+    public void setId(int mId) {
         this.mId = mId;
     }
 
-    public String getmShortDescription() {
+    public String getShortDescription() {
         return mShortDescription;
     }
 
-    public void setmShortDescription(String mShortDescription) {
+    public void setShortDescription(String mShortDescription) {
         this.mShortDescription = mShortDescription;
     }
 
-    public String getmDescription() {
+    public String getDescription() {
         return mDescription;
     }
 
-    public void setmDescription(String mDescription) {
+    public void setDescription(String mDescription) {
         this.mDescription = mDescription;
     }
 
-    public String getmVideoUrl() {
+    public String getVideoUrl() {
         return mVideoUrl;
     }
 
-    public void setmVideoUrl(String mVideoUrl) {
+    public void setVideoUrl(String mVideoUrl) {
         this.mVideoUrl = mVideoUrl;
     }
 
-    public String getmThumbnailUrl() {
+    public String getThumbnailUrl() {
         return mThumbnailUrl;
     }
 
-    public void setmThumbnailUrl(String mThumbnailUrl) {
+    public void setThumbnailUrl(String mThumbnailUrl) {
         this.mThumbnailUrl = mThumbnailUrl;
     }
 }

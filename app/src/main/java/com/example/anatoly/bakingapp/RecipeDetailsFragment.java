@@ -26,7 +26,7 @@ public class RecipeDetailsFragment extends Fragment {
 
     private SelectStepListener stepListener;
     private Recipe recipe;
-
+    private RecipeDetailsAdapter adapter;
 
 
     public RecipeDetailsFragment() {
@@ -64,24 +64,28 @@ public class RecipeDetailsFragment extends Fragment {
         RecyclerView detailsRecyclerView = rootView.findViewById(R.id.rv_recipe_details);
         detailsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         detailsRecyclerView.setHasFixedSize(true);
-        RecipeDetailsAdapter adapter = new RecipeDetailsAdapter(recipe);
+        adapter = new RecipeDetailsAdapter(recipe);
         adapter.setListener(new RecyclerViewOnClickListener() {
             @Override
             public void itemClicked(int position) {
-                stepListener.stepSelected(recipe.getmSteps().get(position-1));
+                stepListener.stepSelected(position-1);
             }
         });
         detailsRecyclerView.setAdapter(adapter);
+        adapter.onRetainInstanceState(savedInstanceState);
         return rootView;
     }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(BUNDLE_RECIPE, recipe);
+        adapter.onSaveInstanceState(outState);
     }
 
     interface SelectStepListener{
-        void stepSelected(Step step);
+        void stepSelected(int stepIndex);
     }
 }

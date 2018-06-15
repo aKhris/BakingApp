@@ -1,6 +1,7 @@
 package com.example.anatoly.bakingapp;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.example.anatoly.bakingapp.Model.Ingredient;
 import com.example.anatoly.bakingapp.Model.Recipe;
@@ -62,6 +63,25 @@ public class JsonUtils {
     }
 
 
+    @Nullable
+    public static Recipe getRecipeById(Context context, int id){
+        String recipesString = readFromAssets(context, JSON_RECIPES_FILE_NAME);
+        JSONArray recipesArray = parseResults(recipesString);
+        if(recipesArray == null || recipesArray.length()==0){
+            return null;
+        }
+        for (int i = 0; i < recipesArray.length(); i++) {
+            try {
+                JSONObject recipeObject = recipesArray.getJSONObject(i);
+                Recipe recipe = parseRecipe(recipeObject);
+                if(recipe.getId()==id){return recipe;}
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
 
 
 
@@ -114,12 +134,12 @@ public class JsonUtils {
             e.printStackTrace();
         }
 
-        recipe.setmId(id);
-        recipe.setmName(name);
-        recipe.setmServings(servings);
-        recipe.setmImageUrl(imageUrl);
-        recipe.setmIngredients(ingredients);
-        recipe.setmSteps(steps);
+        recipe.setId(id);
+        recipe.setName(name);
+        recipe.setServings(servings);
+        recipe.setImageUrl(imageUrl);
+        recipe.setIngredients(ingredients);
+        recipe.setSteps(steps);
 
         return recipe;
     }
@@ -131,9 +151,9 @@ public class JsonUtils {
         String measure = jsonObject.optString(JSON_KEY_MEASURE);
         String ingredient = jsonObject.optString(JSON_KEY_INGREDIENT);
 
-        resultIngredient.setmQuantity(quantity);
-        resultIngredient.setmMeasure(measure);
-        resultIngredient.setmIngredient(ingredient);
+        resultIngredient.setQuantity(quantity);
+        resultIngredient.setMeasure(measure);
+        resultIngredient.setIngredient(ingredient);
 
         return resultIngredient;
     }
@@ -147,11 +167,11 @@ public class JsonUtils {
         String videoUrl = jsonObject.optString(JSON_KEY_VIDEO_URL);
         String thumbnailUrl = jsonObject.optString(JSON_KEY_THUMBNAIL_URL);
 
-        step.setmId(id);
-        step.setmShortDescription(shortDescription);
-        step.setmDescription(description);
-        step.setmVideoUrl(videoUrl);
-        step.setmThumbnailUrl(thumbnailUrl);
+        step.setId(id);
+        step.setShortDescription(shortDescription);
+        step.setDescription(description);
+        step.setVideoUrl(videoUrl);
+        step.setThumbnailUrl(thumbnailUrl);
 
         return step;
     }
