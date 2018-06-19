@@ -3,17 +3,17 @@ package com.example.anatoly.bakingapp;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
+import com.example.anatoly.bakingapp.Base.VideoFullscreenActivity;
 import com.example.anatoly.bakingapp.Model.Recipe;
 
-public class RecipeDetailsActivity extends VideoFullscreenActivity
+public class RecipeDetailsActivity extends AppCompatActivity
         implements RecipeDetailsFragment.SelectStepListener
 {
 
     public static final String ARG_RECIPE = "recipe";
-//    private static final String BUNDLE_RECIPE = "recipe";
     private static final String RECIPE_DETAILS_FRAGMENT_TAG = "recipe_details_fragment";
     private static final String STEP_DETAILS_FRAGMENT_TAG = "step_details_fragment";
 
@@ -39,27 +39,22 @@ public class RecipeDetailsActivity extends VideoFullscreenActivity
                     .replace(R.id.fl_recipe_details_container, recipeDetailsFragment, RECIPE_DETAILS_FRAGMENT_TAG)
                     .commit();
         }
-//        if(isTablet()){
-//            stepSelected(recipe.getSteps().get(0));    //Load first step fragment on the right side if it's a tablet
-//        }
-
+        if(getSupportActionBar()!=null) {
+            getSupportActionBar().setTitle(recipe.getName());
+        }
     }
 
-    private boolean isTablet(){
+    public boolean isTablet(){
         return stepDetailsContainer!=null;
     }
 
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putSerializable(BUNDLE_RECIPE, recipe);
-//    }
 
     @Override
     public void stepSelected(int stepIndex) {
-        Toast.makeText(this, recipe.getSteps().get(stepIndex).getDescription(), Toast.LENGTH_SHORT).show();
-        App.getApp().releasePlayer();
+        // FIXME: 19.06.18 На планшете выбор шага не меняет видео
+//        Toast.makeText(this, recipe.getSteps().get(stepIndex).getDescription(), Toast.LENGTH_SHORT).show();
+//        ((App)(getApplicationContext())).releasePlayer();
         if(isTablet()){     //use container to reload fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
             StepDetailsFragment stepDetailsFragment = (StepDetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
@@ -68,7 +63,7 @@ public class RecipeDetailsActivity extends VideoFullscreenActivity
                 stepDetailsFragment.setParameters(recipe, stepIndex);
                 fragmentManager
                         .beginTransaction()
-                        .replace(R.id.fl_step_details_container, stepDetailsFragment)
+                        .replace(R.id.fl_step_details_container, stepDetailsFragment, STEP_DETAILS_FRAGMENT_TAG)
                         .commit();
             } else {
                 stepDetailsFragment.setParameters(recipe, stepIndex);

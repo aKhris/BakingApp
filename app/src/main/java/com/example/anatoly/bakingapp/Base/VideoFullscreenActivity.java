@@ -1,4 +1,4 @@
-package com.example.anatoly.bakingapp;
+package com.example.anatoly.bakingapp.Base;
 
 import android.content.res.Configuration;
 import android.os.Build;
@@ -23,16 +23,11 @@ public class VideoFullscreenActivity extends AppCompatActivity
         private static final long HIDE_NAVIGATION_DELAY_MILLIS = 3000;
 
 
-        @Override
-        protected void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            checkFullscreen();
-        }
 
         /**
-     * On each OnCreate check current orientation and set correct flags to make activity fullscreen
+     * Check current orientation and set correct flags to make activity fullscreen
      */
-    private void checkFullscreen(){
+    public void checkFullscreen(){
 
         int orientation = getResources().getConfiguration().orientation;
         if(orientation == Configuration.ORIENTATION_LANDSCAPE) {

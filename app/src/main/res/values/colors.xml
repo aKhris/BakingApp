@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- TEXT COLORS -->
+    <color name="colorLine1Text">#de000000</color>
+    <color name="colorLine2Text">#63000000</color>
+    <color name="colorCardCaption">#99000000</color>
 </resources>

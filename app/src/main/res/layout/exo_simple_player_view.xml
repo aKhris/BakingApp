@@ -13,12 +13,14 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <com.google.android.exoplayer2.ui.AspectRatioFrameLayout android:id="@id/exo_content_frame"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_gravity="center">
+      android:layout_gravity="center"
+      >
 
     <!-- Video surface will be inserted as the first child of the content frame. -->
 
@@ -31,6 +33,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"/>
+
+    <ImageView
+        android:id="@+id/iv_no_video"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:src="@drawable/ic_videocam_off_black_24dp"
+        android:tint="@color/colorAccent"
+        android:layout_gravity="center"
+        android:scaleType="fitXY"
+        android:visibility="invisible"
+        />
 
     <com.google.android.exoplayer2.ui.SubtitleView android:id="@id/exo_subtitles"
         android:layout_width="match_parent"

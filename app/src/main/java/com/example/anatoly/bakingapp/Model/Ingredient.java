@@ -21,6 +21,18 @@ public class Ingredient implements Serializable {
         this.mIngredient = mIngredient;
     }
 
+    public int getQuantity() {
+        return mQuantity;
+    }
+
+    public String getMeasure() {
+        return mMeasure;
+    }
+
+    public String getIngredient() {
+        return mIngredient;
+    }
+
     @Override
     public String toString() {
         return String.format(Locale.getDefault(),"%s - %d (%s)",

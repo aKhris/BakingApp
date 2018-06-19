@@ -5,4 +5,8 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="configure">Please select the recipe to show it\'s ingredients on a widget:</string>
     <string name="add_widget">Add widget</string>
+    <string name="check_connection">Please check your Internet connection!</string>
+    <string name="ingredients_caption">Ingredients:</string>
+    <string name="steps_caption">Steps:</string>
+    <string name="servings_caption">Servings</string>
 </resources>

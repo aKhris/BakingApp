@@ -21,4 +21,34 @@
         <item name="android:layout_margin">8dp</item>
     </style>
 
+    <style name="MaterialTextView">
+        <item name="android:fontFamily">"sans-serif"</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+
+    <style name="ListItemLine1Text" parent="MaterialTextView">
+        <item name="android:textColor">@color/colorLine1Text</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ListItemLine2Text" parent="MaterialTextView">
+        <item name="android:textColor">@color/colorLine2Text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="CardTitleText" parent="MaterialTextView">
+        <item name="android:textColor">@color/colorLine1Text</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="CardCaptionText" parent="MaterialTextView">
+        <item name="android:textColor">@color/colorCardCaption</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+
 </resources>

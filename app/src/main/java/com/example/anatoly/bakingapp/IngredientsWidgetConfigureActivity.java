@@ -1,26 +1,29 @@
 package com.example.anatoly.bakingapp;
 
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.anatoly.bakingapp.Adapters.RecipesListAdapter;
+import com.example.anatoly.bakingapp.Base.LoadRecipesActivity;
 import com.example.anatoly.bakingapp.Model.Recipe;
+import com.example.anatoly.bakingapp.Utils.NetworkUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The configuration screen for the {@link IngredientsWidget IngredientsWidget} AppWidget.
  */
-public class IngredientsWidgetConfigureActivity extends Activity implements RecyclerViewOnClickListener {
+public class IngredientsWidgetConfigureActivity extends LoadRecipesActivity
+        implements RecyclerViewOnClickListener
+            {
 
     private static final String PREFS_NAME = "com.example.anatoly.bakingapp.IngredientsWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
@@ -30,9 +33,9 @@ public class IngredientsWidgetConfigureActivity extends Activity implements Recy
     private int selectedPos=RecyclerView.NO_POSITION;
 
     private List<Recipe> recipes;
+                private RecyclerView recipesRecyclerView;
 
-
-    private int getRecipePositionById (int id){
+                private int getRecipePositionById (int id){
         for (int i = 0; i < recipes.size(); i++) {
             if(recipes.get(i).getId()==id){
                 return i;
@@ -96,20 +99,15 @@ public class IngredientsWidgetConfigureActivity extends Activity implements Recy
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
-
         setContentView(R.layout.ingredients_widget_configure);
+        if(!NetworkUtils.isOnline(this)) {
+            Toast.makeText(this, R.string.check_connection, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        recipes = JsonUtils.getRecipesList(this);
+        recipesRecyclerView = findViewById(R.id.rv_select_recipes_wca);
 
-        RecyclerView recipesRecyclerView = findViewById(R.id.rv_select_recipes_wca);
-        int mColumnCount = getResources().getInteger(R.integer.columns_count);  //=3 for tablets otherwise =1
 
-        RecipesListAdapter adapter = new RecipesListAdapter(recipes, true);
-        adapter.setListener(this);
-        adapter.setHasStableIds(true);
-        recipesRecyclerView.setLayoutManager(new GridLayoutManager(this, mColumnCount, RecyclerView.VERTICAL, false));
-        recipesRecyclerView.setHasFixedSize(true);
-        recipesRecyclerView.setAdapter(adapter);
 
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
@@ -127,12 +125,25 @@ public class IngredientsWidgetConfigureActivity extends Activity implements Recy
             return;
         }
 
-        adapter.selectItem(getRecipePositionById(loadRecipeIdPref(IngredientsWidgetConfigureActivity.this, mAppWidgetId)));
+        initLoader();
     }
 
     @Override
     public void itemClicked(int position) {
         selectedPos = position;
     }
-}
+
+                @Override
+                public void onRecipesLoaded(ArrayList<Recipe> recipes) {
+                    this.recipes = recipes;
+                    RecipesListAdapter adapter = new RecipesListAdapter(recipes, true);
+                    adapter.setListener(this);
+                    adapter.setHasStableIds(true);
+                    int mColumnCount = getResources().getInteger(R.integer.columns_count);  //=3 for tablets otherwise =1
+                    recipesRecyclerView.setLayoutManager(new GridLayoutManager(this, mColumnCount, RecyclerView.VERTICAL, false));
+                    recipesRecyclerView.setHasFixedSize(true);
+                    recipesRecyclerView.setAdapter(adapter);
+                    adapter.selectItem(getRecipePositionById(loadRecipeIdPref(IngredientsWidgetConfigureActivity.this, mAppWidgetId)));
+                }
+            }
 

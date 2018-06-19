@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +14,12 @@ import android.view.ViewGroup;
 
 import com.example.anatoly.bakingapp.Adapters.RecipesListAdapter;
 import com.example.anatoly.bakingapp.Model.Recipe;
+import com.example.anatoly.bakingapp.Utils.JsonUtils;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 /**
@@ -26,6 +28,7 @@ import java.util.List;
 public class SelectRecipeFragment extends Fragment
     implements RecyclerViewOnClickListener
 {
+    @BindView(R.id.rv_select_recipes) RecyclerView recipesRecyclerView;
 
     private static final String ARG_RECIPES = "recipes";
     private int mColumnCount=1;
@@ -37,6 +40,9 @@ public class SelectRecipeFragment extends Fragment
         // Required empty public constructor
     }
 
+    public void setRecipes(ArrayList<Recipe> recipes) {
+        this.recipes = recipes;
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -55,8 +61,6 @@ public class SelectRecipeFragment extends Fragment
         mColumnCount = getResources().getInteger(R.integer.columns_count);  //=3 for tablets otherwise =1
         if (savedInstanceState != null && savedInstanceState.containsKey(ARG_RECIPES)) {
             recipes = (ArrayList<Recipe>) savedInstanceState.getSerializable(ARG_RECIPES);
-        } else {
-            recipes = JsonUtils.getRecipesList(getContext());
         }
     }
 
@@ -65,7 +69,7 @@ public class SelectRecipeFragment extends Fragment
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_select_recipe, container, false);
-        RecyclerView recipesRecyclerView = view.findViewById(R.id.rv_select_recipes);
+        ButterKnife.bind(this, view);
         RecipesListAdapter adapter = new RecipesListAdapter(recipes, false);
         adapter.setListener(this);
         adapter.setHasStableIds(true);

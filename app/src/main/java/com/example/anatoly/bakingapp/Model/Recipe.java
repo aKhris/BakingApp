@@ -1,6 +1,15 @@
 package com.example.anatoly.bakingapp.Model;
 
+import android.content.Context;
+import android.net.Uri;
+
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Recipe implements Serializable{
@@ -59,5 +68,18 @@ public class Recipe implements Serializable{
 
     public void setImageUrl(String mImageUrl) {
         this.mImageUrl = mImageUrl;
+    }
+
+    public List<MediaSource> getMediaSources(Context context){
+        ArrayList<MediaSource> mediaSources = new ArrayList<>();
+        for (Step s:mSteps) {
+            String userAgent = Util.getUserAgent(context, context.getApplicationInfo().name);
+            DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(context, userAgent);
+            MediaSource mediaSource =
+                    new ExtractorMediaSource.Factory(dataSourceFactory)
+                            .createMediaSource(Uri.parse(s.getVideoUrl()));
+            mediaSources.add(mediaSource);
+        }
+        return mediaSources;
     }
 }

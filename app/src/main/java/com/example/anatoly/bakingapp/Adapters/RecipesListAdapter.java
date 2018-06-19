@@ -11,10 +11,14 @@ import android.widget.TextView;
 import com.example.anatoly.bakingapp.Model.Recipe;
 import com.example.anatoly.bakingapp.R;
 import com.example.anatoly.bakingapp.RecyclerViewOnClickListener;
-import com.example.anatoly.bakingapp.SelectableRecyclerViewAdapter;
+import com.example.anatoly.bakingapp.Base.SelectableRecyclerViewAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class RecipesListAdapter extends SelectableRecyclerViewAdapter<RecyclerView.ViewHolder>{
 
@@ -63,6 +67,9 @@ public class RecipesListAdapter extends SelectableRecyclerViewAdapter<RecyclerVi
         if(!(viewHolder instanceof RecipeViewHolder)){return;}
         RecipeViewHolder holder = (RecipeViewHolder)viewHolder;
         holder.tvRecipeName.setText(recipe.getName());
+        holder.tvRecipeServings.setText(
+                String.format(Locale.getDefault(), "%s: %d", holder.itemView.getContext().getString(R.string.servings_caption), recipe.getServings())
+        );
         if(recipe.getImageUrl().length()>0) {
             Picasso.get()
                     .load(recipe.getImageUrl())
@@ -79,13 +86,13 @@ public class RecipesListAdapter extends SelectableRecyclerViewAdapter<RecyclerVi
 
 
     class RecipeViewHolder extends SelectableViewHolder{
-        ImageView ivRecipeImage;
-        TextView tvRecipeName;
+        @BindView(R.id.iv_recipe_image) ImageView ivRecipeImage;
+        @BindView(R.id.tv_recipe_name) TextView tvRecipeName;
+        @BindView(R.id.tv_recipe_servings) TextView tvRecipeServings;
 
         RecipeViewHolder(View itemView) {
             super(itemView);
-            ivRecipeImage = itemView.findViewById(R.id.iv_recipe_image);
-            tvRecipeName = itemView.findViewById(R.id.tv_recipe_name);
+            ButterKnife.bind(this, itemView);
         }
     }
 

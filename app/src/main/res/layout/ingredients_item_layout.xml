@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="24dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tv_ingredient_number"
+        style="@style/ListItemLine1Text"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:text="1."
+        android:paddingEnd="0dp"
+        android:paddingRight="0dp"
+        />
+    <TextView
+        android:id="@+id/tv_ingredient_name"
+        android:layout_width="0dp"
+        tools:text="Bittersweet chocolate (60-70% cacao)"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/tv_ingredient_number"
+        app:layout_constraintRight_toLeftOf="@id/tv_ingredient_quantity"
+        style="@style/ListItemLine1Text"
+        android:paddingLeft="0dp"
+        android:paddingStart="0dp"
+        />
+    <TextView
+        android:id="@+id/tv_ingredient_quantity"
+        tools:text="350 G"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_ingredient_name"
+        app:layout_constraintRight_toRightOf="parent"
+        style="@style/ListItemLine2Text"
+        android:textSize="12sp"
+        />
+</android.support.constraint.ConstraintLayout>
