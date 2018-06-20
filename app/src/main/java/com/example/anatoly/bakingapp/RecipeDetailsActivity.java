@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
-import com.example.anatoly.bakingapp.Base.VideoFullscreenActivity;
 import com.example.anatoly.bakingapp.Model.Recipe;
 
 public class RecipeDetailsActivity extends AppCompatActivity
@@ -52,9 +51,6 @@ public class RecipeDetailsActivity extends AppCompatActivity
 
     @Override
     public void stepSelected(int stepIndex) {
-        // FIXME: 19.06.18 На планшете выбор шага не меняет видео
-//        Toast.makeText(this, recipe.getSteps().get(stepIndex).getDescription(), Toast.LENGTH_SHORT).show();
-//        ((App)(getApplicationContext())).releasePlayer();
         if(isTablet()){     //use container to reload fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
             StepDetailsFragment stepDetailsFragment = (StepDetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
@@ -66,8 +62,12 @@ public class RecipeDetailsActivity extends AppCompatActivity
                         .replace(R.id.fl_step_details_container, stepDetailsFragment, STEP_DETAILS_FRAGMENT_TAG)
                         .commit();
             } else {
+
                 stepDetailsFragment.setParameters(recipe, stepIndex);
-                stepDetailsFragment.refreshViews();
+                stepDetailsFragment.actualizeMediaSource();
+//                stepDetailsFragment.refreshViews();
+//                stepDetailsFragment.setPlayer();
+//                stepDetailsFragment.setNoVideo(false);
             }
 
 

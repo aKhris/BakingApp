@@ -5,7 +5,9 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.example.anatoly.bakingapp.Model.Recipe;
+import com.example.anatoly.bakingapp.Utils.PlayerUtils;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.CompositeMediaSource;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
@@ -19,47 +21,28 @@ import com.google.android.exoplayer2.util.Util;
 
 public class App extends Application {
     private SimpleExoPlayer mExoPlayer;
+    private int lastRecipeId = Recipe.INVALID_ID;
     private int lastPlayedIndex = -1;
-    private ConcatenatingMediaSource mediaSource;
+    private MediaSource mediaSource;
 
     public SimpleExoPlayer getExoPlayer(Recipe recipe, int stepIndex) {
         if (mExoPlayer==null) {
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
-
-
-//        if(lastPlayedVideo!=null && mediaUri.equals(lastPlayedVideo)){
-//            return mExoPlayer;
-//        }  else {
-//            String userAgent = Util.getUserAgent(this, this.getApplicationInfo().name);
-//            DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this, userAgent);
-
-//            MediaSource mediaSource =
-//                    new ExtractorMediaSource.Factory(dataSourceFactory)
-//                            .createMediaSource(mediaUri);
-
-
-            mediaSource = new ConcatenatingMediaSource();
-            mediaSource.addMediaSources(recipe.getMediaSources(this));
-//            mExoPlayer.stop();
-            mExoPlayer.prepare(mediaSource, false, false);
-            if(stepIndex!=lastPlayedIndex) {
-                mExoPlayer.seekTo(stepIndex, 0L);
-            }
-//            lastPlayedVideo = mediaUri;
+           mExoPlayer = PlayerUtils.makeExoPlayer(this);
         }
-            lastPlayedIndex = stepIndex;
+
+            if(mediaSource==null || recipe.getId()!=lastRecipeId || lastPlayedIndex!=stepIndex) {
+                changeMediaSource(recipe, stepIndex);
+            }
             return mExoPlayer;
-//        }
     }
 
-    // TODO: 19.06.18 Сделать возможность сброса mediaSource
-    //И сбрасывать его при смене рецепта и при последнем сбросе player
-    public void preparePlayer(){
-        int index = mExoPlayer.getCurrentWindowIndex();
-        mExoPlayer.prepare(mediaSource);
-        mExoPlayer.seekTo(index, 0L);
+    public void changeMediaSource(Recipe recipe, int stepIndex){
+        mediaSource = PlayerUtils.makeMediaSource(this, recipe.getSteps().get(stepIndex).getVideoUrl());
+        lastPlayedIndex = stepIndex;
+        lastRecipeId = recipe.getId();
+        mExoPlayer.prepare(mediaSource, true, false);
     }
+
 
     public void releasePlayer(){
         if (mExoPlayer != null) {

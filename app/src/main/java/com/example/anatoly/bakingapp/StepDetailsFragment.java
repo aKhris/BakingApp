@@ -2,42 +2,39 @@ package com.example.anatoly.bakingapp;
 
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.anatoly.bakingapp.Base.VideoFragment;
 import com.example.anatoly.bakingapp.Model.Recipe;
 import com.example.anatoly.bakingapp.Model.Step;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.PlayerControlView;
-import com.google.android.exoplayer2.ui.PlayerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 /**
- * Fragment containing video player and step description textview.
- * Extends from {@link VideoFragment} to save playback state in
- * onPause and restore it in onResume.
+ * Fragment containing video player fragment and step description textview.
  */
-public class StepDetailsFragment extends VideoFragment
+public class StepDetailsFragment
+    extends Fragment
+    implements VideoPlayerFragment.VideoPlayerCallbacks
 {
     @Nullable @BindView(R.id.tv_step_description) TextView stepDescription;
-    @BindView(R.id.pv_video_player) PlayerView mPlayerView;
 
     private static final String BUNDLE_STEP_INDEX = "step_index";
     private static final String BUNDLE_RECIPE = "recipe";
+
+    private static final String VIDEO_FRAGMENT_TAG = "video_fragment_tag";
+
 
     private Recipe recipe;
     private int stepIndex;
@@ -92,10 +89,22 @@ public class StepDetailsFragment extends VideoFragment
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_step_details, container, false);
         ButterKnife.bind(this, rootView);
-        refreshViews();
 
+        FragmentManager fragmentManager = getChildFragmentManager();
+
+        VideoPlayerFragment videoPlayerFragment = (VideoPlayerFragment) fragmentManager.findFragmentByTag(VIDEO_FRAGMENT_TAG);
+                if(videoPlayerFragment==null){
+                    videoPlayerFragment = new VideoPlayerFragment();
+                    fragmentManager
+                            .beginTransaction()
+                            .replace(R.id.video_player_fragment_container, videoPlayerFragment, VIDEO_FRAGMENT_TAG)
+                            .commit();
+                }
+
+        refreshViews();
         return rootView;
     }
+
 
     /**
      * Method of refreshing views inside fragment. It's mainly used while switching between
@@ -108,9 +117,17 @@ public class StepDetailsFragment extends VideoFragment
         if(stepDescription!=null) {
             stepDescription.setText(step.getDescription());
         }
-        setPlayer(app.getExoPlayer(recipe, stepIndex));
+    }
+    
+    private void showToast(){
+        if(stepDescription==null) {
+            Toast.makeText(app, getCurrentStep().getShortDescription(), Toast.LENGTH_SHORT).show();
+        }
     }
 
+    private Step getCurrentStep(){
+        return recipe.getSteps().get(stepIndex);
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -119,26 +136,37 @@ public class StepDetailsFragment extends VideoFragment
         outState.putInt(BUNDLE_STEP_INDEX, stepIndex);
     }
 
-
-
-    @Override
-    public PlayerView getPlayerView() {
-        return mPlayerView;
+    public void actualizeMediaSource(){
+        app.changeMediaSource(recipe, stepIndex);
     }
 
     @Override
-    public void preparePlayer() {
-        app.preparePlayer();
-    }
-
-    @Override
-    public void changeStep(int index) {
-        stepIndex = index;
+    public void onNextClick() {
+        changeStepIndex(true);
+        app.changeMediaSource(recipe,stepIndex);
         refreshViews();
-        if(stepDescription==null) {
-            Toast.makeText(app, recipe.getSteps().get(stepIndex).getShortDescription(), Toast.LENGTH_SHORT).show();
-        }
+        showToast();
     }
 
+    @Override
+    public void onPrevClick() {
+        changeStepIndex(false);
+        app.changeMediaSource(recipe,stepIndex);
+        refreshViews();
+        showToast();
+    }
+
+    @Override
+    public SimpleExoPlayer getPlayer() {
+        return app.getExoPlayer(recipe, stepIndex);
+    }
+
+
+    private void changeStepIndex(boolean isNext){
+        int stepCount = recipe.getSteps().size();
+        stepIndex = isNext? stepIndex+1 : stepIndex-1;
+        if(stepIndex>stepCount-1){stepIndex=0;}
+        else if (stepIndex<0){stepIndex = stepCount-1;}
+    }
 
 }
