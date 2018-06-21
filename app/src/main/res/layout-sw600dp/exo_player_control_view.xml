@@ -53,7 +53,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp"
+        android:paddingRight="8dp"
         android:includeFontPadding="false"
         android:textColor="#FFBEBEBE"
         />

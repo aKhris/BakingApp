@@ -33,7 +33,7 @@ public class RecipeDetailsFragment extends Fragment {
     private static final String BUNDLE_IS_TABLET = "is_tablet";
 
     private boolean isTablet=false;
-    private SelectStepListener stepListener;
+    private RecipeDetailsListener recipeDetailsListener;
     private Recipe recipe;
     private StepsListAdapter adapter;
 
@@ -45,10 +45,10 @@ public class RecipeDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof SelectStepListener){
-            stepListener = (SelectStepListener) context;
+        if(context instanceof RecipeDetailsListener){
+            recipeDetailsListener = (RecipeDetailsListener) context;
         } else {
-            throw new UnsupportedOperationException("Activity must implement SelectStepListener.");
+            throw new UnsupportedOperationException("Activity must implement RecipeDetailsListener.");
         }
         RecipeDetailsActivity activity = (RecipeDetailsActivity)context;
         isTablet = activity.isTablet();
@@ -65,6 +65,7 @@ public class RecipeDetailsFragment extends Fragment {
             recipe = (Recipe) savedInstanceState.getSerializable(BUNDLE_RECIPE);
             isTablet = savedInstanceState.getBoolean(BUNDLE_IS_TABLET);
         }
+
     }
 
 
@@ -83,11 +84,12 @@ public class RecipeDetailsFragment extends Fragment {
 
         detailsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         detailsRecyclerView.setHasFixedSize(true);
+
         adapter = new StepsListAdapter(recipe, isTablet);
         adapter.setListener(new RecyclerViewOnClickListener() {
             @Override
             public void itemClicked(int position) {
-                stepListener.stepSelected(position);
+                recipeDetailsListener.onStepSelected(position);
             }
         });
         detailsRecyclerView.setAdapter(adapter);
@@ -101,9 +103,22 @@ public class RecipeDetailsFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(ingredientsRecyclerView.getContext(),
                 LinearLayoutManager.VERTICAL);
         ingredientsRecyclerView.addItemDecoration(dividerItemDecoration);
+        if(savedInstanceState==null) {
+            recipeDetailsListener.onRecipeDetailsFragmentFirstInit(this);
+        }
         return rootView;
     }
 
+
+    /**
+     * Force recipe's step selection.
+     * Used for initial selection of first step when user opens the recipe activity on a tablet.
+     * @param position
+     */
+    public void selectItem(int position){
+        adapter.selectItem(position);
+        adapter.itemClicked(position);
+    }
 
 
     @Override
@@ -114,7 +129,8 @@ public class RecipeDetailsFragment extends Fragment {
         adapter.onSaveInstanceState(outState);
     }
 
-    interface SelectStepListener{
-        void stepSelected(int stepIndex);
+    interface RecipeDetailsListener {
+        void onStepSelected(int stepIndex);
+        void onRecipeDetailsFragmentFirstInit(RecipeDetailsFragment fragment);
     }
 }

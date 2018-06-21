@@ -9,7 +9,7 @@ import android.widget.FrameLayout;
 import com.example.anatoly.bakingapp.Model.Recipe;
 
 public class RecipeDetailsActivity extends AppCompatActivity
-        implements RecipeDetailsFragment.SelectStepListener
+        implements RecipeDetailsFragment.RecipeDetailsListener
 {
 
     public static final String ARG_RECIPE = "recipe";
@@ -27,19 +27,24 @@ public class RecipeDetailsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
         stepDetailsContainer = findViewById(R.id.fl_step_details_container);
+        recipe = (Recipe) getIntent().getSerializableExtra(ARG_RECIPE);
+        if(getSupportActionBar()!=null) {
+            getSupportActionBar().setTitle(recipe.getName());
+        }
+
+
+
+        if(!isTablet()){return;}
         RecipeDetailsFragment recipeDetailsFragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
-        recipe = (Recipe) getIntent().getSerializableExtra(ARG_RECIPE);
-        if (savedInstanceState==null && findViewById(R.id.fl_recipe_details_container)!=null){
+        recipeDetailsFragment = (RecipeDetailsFragment) fragmentManager.findFragmentByTag(RECIPE_DETAILS_FRAGMENT_TAG);
+        if (recipeDetailsFragment==null){
             recipeDetailsFragment = new RecipeDetailsFragment();
             recipeDetailsFragment.setRecipe(recipe);
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.fl_recipe_details_container, recipeDetailsFragment, RECIPE_DETAILS_FRAGMENT_TAG)
                     .commit();
-        }
-        if(getSupportActionBar()!=null) {
-            getSupportActionBar().setTitle(recipe.getName());
         }
     }
 
@@ -50,7 +55,7 @@ public class RecipeDetailsActivity extends AppCompatActivity
 
 
     @Override
-    public void stepSelected(int stepIndex) {
+    public void onStepSelected(int stepIndex) {
         if(isTablet()){     //use container to reload fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
             StepDetailsFragment stepDetailsFragment = (StepDetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
@@ -62,10 +67,9 @@ public class RecipeDetailsActivity extends AppCompatActivity
                         .replace(R.id.fl_step_details_container, stepDetailsFragment, STEP_DETAILS_FRAGMENT_TAG)
                         .commit();
             } else {
-
                 stepDetailsFragment.setParameters(recipe, stepIndex);
                 stepDetailsFragment.actualizeMediaSource();
-
+                stepDetailsFragment.refreshViews();
             }
 
 
@@ -78,4 +82,10 @@ public class RecipeDetailsActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onRecipeDetailsFragmentFirstInit(RecipeDetailsFragment fragment) {
+        if(isTablet()){
+            fragment.selectItem(0);
+        }
+    }
 }

@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.anatoly.bakingapp.Model.Ingredient;
@@ -54,18 +55,37 @@ public class StepsListAdapter extends SelectableRecyclerViewAdapter<RecyclerView
                 return new StepViewHolder(stepView);
     }
 
+    /**
+     * Using of regex got here:
+     * http://www.vogella.com/tutorials/JavaRegularExpressions/article.html#using-regular-expressions-with-string-methods
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
                 StepViewHolder stepHolder = (StepViewHolder) holder;
                 Step step = recipe.getSteps().get(position);
-                if(position>0 && stepHolder.tvStepNumber!=null){
-                    stepHolder.tvStepNumber.setText(
-                            String.format(Locale.getDefault(), "%d. ", position));
+                if(stepHolder.tvStepNumber!=null){
+                    if(position>0){
+                        stepHolder.tvStepNumber.setVisibility(View.VISIBLE);
+                        stepHolder.ivStepImage.setVisibility(View.VISIBLE);
+                        stepHolder.tvStepNumber.setText(
+                                String.format(Locale.getDefault(), "%d", position));
+                    } else {
+                        stepHolder.tvStepNumber.setVisibility(View.INVISIBLE);
+                        stepHolder.ivStepImage.setVisibility(View.INVISIBLE);
+                    }
                 }
+
                 stepHolder.tvStepName.setText(step.getShortDescription());
                 if(stepHolder.tvStepFullDescription!=null){
-                    stepHolder.tvStepFullDescription.setText(step.getDescription());
+                    String description = step.getDescription();
+                    String regex = "(\\d{1,3}\\.\\s)(.*)";
+                    if(description.matches(regex)){
+                        description = description.replaceAll(regex, "$2");
+                    }
+                    stepHolder.tvStepFullDescription.setText(description);
                 }
     }
 
@@ -84,6 +104,7 @@ public class StepsListAdapter extends SelectableRecyclerViewAdapter<RecyclerView
 
     class StepViewHolder extends SelectableViewHolder{
         @Nullable @BindView(R.id.tv_step_number) TextView tvStepNumber;
+        @Nullable @BindView(R.id.iv_step_image) ImageView ivStepImage;
         @BindView(R.id.tv_step_name) TextView tvStepName;
         @Nullable @BindView(R.id.tv_step_full_description) TextView tvStepFullDescription;
 
