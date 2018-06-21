@@ -65,9 +65,7 @@ public class RecipeDetailsActivity extends AppCompatActivity
 
                 stepDetailsFragment.setParameters(recipe, stepIndex);
                 stepDetailsFragment.actualizeMediaSource();
-//                stepDetailsFragment.refreshViews();
-//                stepDetailsFragment.setPlayer();
-//                stepDetailsFragment.setNoVideo(false);
+
             }
 
 

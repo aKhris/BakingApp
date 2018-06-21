@@ -2,14 +2,18 @@ package com.example.anatoly.bakingapp;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -44,7 +48,8 @@ public class VideoPlayerFragment extends Fragment
 
     @BindView(R.id.pv_video_player) PlayerView playerView;
     @BindView(R.id.iv_no_video) ImageView noVideoImageView;
-
+    @BindView(R.id.exo_buffering) ProgressBar bufferingBar;
+    @BindView(R.id.exo_shutter) View shutter;
 
     @Optional
     @OnClick(R.id.exo_next_custom)
@@ -130,7 +135,11 @@ public class VideoPlayerFragment extends Fragment
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+        if (playbackState == Player.STATE_BUFFERING){
+            bufferingBar.setVisibility(View.VISIBLE);
+        } else {
+            bufferingBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -165,8 +174,11 @@ public class VideoPlayerFragment extends Fragment
 
 
     public void setNoVideo(boolean noVideo){
+        FrameLayout contentFrame = playerView.findViewById(R.id.exo_content_frame);
         if(noVideo){
             noVideoImageView.setVisibility(View.VISIBLE);
+            shutter.setBackgroundColor(Color.BLACK);
+            shutter.setVisibility(View.VISIBLE);
         } else {
             noVideoImageView.setVisibility(View.INVISIBLE);
         }
@@ -176,11 +188,6 @@ public class VideoPlayerFragment extends Fragment
     private void setState(boolean state){
         playerView.getPlayer().setPlayWhenReady(state);
     }
-
-
-//    public void setMediaSource(MediaSource mediaSource){
-//        this.player.prepare(mediaSource, true, false);
-//    }
 
 
     interface VideoPlayerCallbacks {
