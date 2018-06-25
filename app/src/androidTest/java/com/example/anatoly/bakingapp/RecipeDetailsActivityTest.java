@@ -64,7 +64,6 @@ public class RecipeDetailsActivityTest {
         isTablet = isTablet();
     }
 
-
     /**
      * Test clicking on steps list item depending on device (tablet/phone)
      */
