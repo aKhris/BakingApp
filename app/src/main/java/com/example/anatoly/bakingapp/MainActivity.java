@@ -1,8 +1,15 @@
 package com.example.anatoly.bakingapp;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -10,6 +17,8 @@ import android.widget.Toast;
 import com.example.anatoly.bakingapp.Base.LoadRecipesActivity;
 import com.example.anatoly.bakingapp.Model.Recipe;
 import com.example.anatoly.bakingapp.Utils.NetworkUtils;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 
 import java.util.ArrayList;
 
@@ -24,6 +33,8 @@ public class MainActivity extends LoadRecipesActivity
 
     private static final String SELECT_RECIPE_FRAGMENT_TAG = "select_recipe_fragment";
     private SelectRecipeFragment selectRecipeFragment;
+
+    @Nullable private static SimpleIdlingResource idlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +52,11 @@ public class MainActivity extends LoadRecipesActivity
             selectRecipeFragment = new SelectRecipeFragment();
         }
         progressBar.setVisibility(View.VISIBLE);
+
+        //Setting state of idlingResource to false since we are starting to download recipes
+        if (idlingResource != null) {
+            idlingResource.setIdleState(false);
+        }
         initLoader();
     }
 
@@ -57,10 +73,49 @@ public class MainActivity extends LoadRecipesActivity
     public void onRecipesLoaded(ArrayList<Recipe> recipes) {
         progressBar.setVisibility(View.GONE);
         selectRecipeFragment.setRecipes(recipes);
+        selectRecipeFragment.setIdlingResource(idlingResource);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.fl_select_recipe_container, selectRecipeFragment, SELECT_RECIPE_FRAGMENT_TAG)
                 .commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        idlingResource=null;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.help_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_help:
+                new LibsBuilder()
+                        .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                        .start(this);
+                return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public static IdlingResource getIdlingResource() {
+        if (idlingResource == null) {
+            idlingResource = new SimpleIdlingResource();
+        }
+        return idlingResource;
     }
 }

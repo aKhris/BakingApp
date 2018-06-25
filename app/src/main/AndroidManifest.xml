@@ -17,12 +17,17 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeDetailsActivity" />
-        <activity android:name=".StepDetailsActivity" />
+        <activity android:name=".RecipeDetailsActivity"
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop"
+            />
+        <activity android:name=".StepDetailsActivity"
+            android:parentActivityName=".RecipeDetailsActivity"
+            android:launchMode="singleTop"
+            />
 
         <receiver android:name=".IngredientsWidget">
             <intent-filter>
@@ -39,6 +44,10 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+        <service android:name=".IngredientsWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            />
+        <service android:name=".GetRecipesListService" />
     </application>
 
 </manifest>

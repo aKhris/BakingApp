@@ -82,4 +82,17 @@ public class Recipe implements Serializable{
         }
         return mediaSources;
     }
+
+
+    /**
+     * Need to override this method to use it in MainActivityTest
+     * while checking if the intent extra contains the correct Recipe object or not.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return (
+                (obj instanceof Recipe) &&
+                        (((Recipe) obj).getId() == this.mId)
+        );
+    }
 }

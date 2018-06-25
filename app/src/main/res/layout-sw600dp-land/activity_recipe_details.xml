@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v4.widget.NestedScrollView android:layout_width="0dp"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nsv_steps_scroll"
+        android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent">
     <FrameLayout

@@ -2,6 +2,7 @@ package com.example.anatoly.bakingapp.Adapters;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.anatoly.bakingapp.Model.Ingredient;
 import com.example.anatoly.bakingapp.Model.Recipe;
 import com.example.anatoly.bakingapp.Model.Step;
 import com.example.anatoly.bakingapp.R;
 import com.example.anatoly.bakingapp.RecyclerViewOnClickListener;
 import com.example.anatoly.bakingapp.Base.SelectableRecyclerViewAdapter;
+import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
@@ -58,15 +59,22 @@ public class StepsListAdapter extends SelectableRecyclerViewAdapter<RecyclerView
     /**
      * Using of regex got here:
      * http://www.vogella.com/tutorials/JavaRegularExpressions/article.html#using-regular-expressions-with-string-methods
-     * @param holder
-     * @param position
      */
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
                 StepViewHolder stepHolder = (StepViewHolder) holder;
                 Step step = recipe.getSteps().get(position);
-                if(stepHolder.tvStepNumber!=null){
+
+                    if (step.getThumbnailUrl() != null && step.getThumbnailUrl().length() > 0) {
+                        Picasso.get()
+                                .load(step.getThumbnailUrl())
+                                .into(stepHolder.ivStepImage);
+                    } else {
+                        stepHolder.ivStepImage.setImageResource(R.drawable.round_shape);
+                    }
+
+
                     if(position>0){
                         stepHolder.tvStepNumber.setVisibility(View.VISIBLE);
                         stepHolder.ivStepImage.setVisibility(View.VISIBLE);
@@ -76,7 +84,7 @@ public class StepsListAdapter extends SelectableRecyclerViewAdapter<RecyclerView
                         stepHolder.tvStepNumber.setVisibility(View.INVISIBLE);
                         stepHolder.ivStepImage.setVisibility(View.INVISIBLE);
                     }
-                }
+
 
                 stepHolder.tvStepName.setText(step.getShortDescription());
                 if(stepHolder.tvStepFullDescription!=null){
@@ -102,9 +110,18 @@ public class StepsListAdapter extends SelectableRecyclerViewAdapter<RecyclerView
         }
     }
 
+    @VisibleForTesting
+    @Nullable
+    public Step getStep (int position){
+        if(position<getItemCount()){
+            return recipe.getSteps().get(position);
+        }
+        return null;
+    }
+
     class StepViewHolder extends SelectableViewHolder{
-        @Nullable @BindView(R.id.tv_step_number) TextView tvStepNumber;
-        @Nullable @BindView(R.id.iv_step_image) ImageView ivStepImage;
+        @BindView(R.id.tv_step_number) TextView tvStepNumber;
+        @BindView(R.id.iv_step_image) ImageView ivStepImage;
         @BindView(R.id.tv_step_name) TextView tvStepName;
         @Nullable @BindView(R.id.tv_step_full_description) TextView tvStepFullDescription;
 

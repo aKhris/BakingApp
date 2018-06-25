@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tv_ingredient_number"
+        style="@style/ListItemLine1Text"
+        android:textStyle="bold"
+        tools:text="1."
+        android:paddingEnd="0dp"
+        android:paddingRight="0dp"
+        android:textColor="@color/colorAccent"
+        />
+    <TextView
+        android:id="@+id/tv_ingredient_name"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        tools:text="Bittersweet chocolate (60-70% cacao)"
+        style="@style/ListItemLine1Text"
+        android:paddingLeft="0dp"
+        android:paddingStart="0dp"
+        />
+    <TextView
+        android:id="@+id/tv_ingredient_quantity"
+        tools:text="350 G"
+        style="@style/ListItemLine2Text"
+        android:textSize="12sp"
+        />
+</LinearLayout>

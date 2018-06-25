@@ -29,7 +29,7 @@ public class HTTPTaskLoader extends AsyncTaskLoader<ArrayList<Recipe>> {
     @Nullable
     @Override
     public ArrayList<Recipe> loadInBackground() {
-        return JsonUtils.getRecipesList(getContext());
+        return JsonUtils.getRecipesList();
     }
 
     @Override

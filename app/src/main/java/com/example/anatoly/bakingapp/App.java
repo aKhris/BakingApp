@@ -1,23 +1,11 @@
 package com.example.anatoly.bakingapp;
 
 import android.app.Application;
-import android.net.Uri;
-import android.util.Log;
 
 import com.example.anatoly.bakingapp.Model.Recipe;
 import com.example.anatoly.bakingapp.Utils.PlayerUtils;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.CompositeMediaSource;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.DynamicConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 public class App extends Application {
     private SimpleExoPlayer mExoPlayer;
@@ -26,6 +14,7 @@ public class App extends Application {
     private MediaSource mediaSource;
 
     public SimpleExoPlayer getExoPlayer(Recipe recipe, int stepIndex) {
+
         if (mExoPlayer==null) {
            mExoPlayer = PlayerUtils.makeExoPlayer(this);
         }
@@ -49,6 +38,7 @@ public class App extends Application {
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
+            mediaSource = null;
         }
     }
 

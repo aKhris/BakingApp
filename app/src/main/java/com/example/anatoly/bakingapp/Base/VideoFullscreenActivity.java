@@ -2,9 +2,7 @@ package com.example.anatoly.bakingapp.Base;
 
 import android.content.res.Configuration;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -35,6 +36,11 @@ public class StepDetailsFragment
 
     private static final String VIDEO_FRAGMENT_TAG = "video_fragment_tag";
 
+    /**
+     * listener is null on a tablet
+     */
+    @Nullable
+    private StepChangeListener listener;
 
     private Recipe recipe;
     private int stepIndex;
@@ -50,6 +56,9 @@ public class StepDetailsFragment
     public void onAttach(Context context) {
         super.onAttach(context);
         this.app = (App)context.getApplicationContext();
+        if(context instanceof StepChangeListener){
+            this.listener = (StepChangeListener) context;
+        }
     }
 
     @Override
@@ -84,7 +93,7 @@ public class StepDetailsFragment
      * But it seems that we need PlayerControlView replacing it's placeholder in XML, not just put it beside.
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_step_details, container, false);
@@ -146,6 +155,7 @@ public class StepDetailsFragment
         app.changeMediaSource(recipe,stepIndex);
         refreshViews();
         showToast();
+        tellListener();
     }
 
     @Override
@@ -154,10 +164,19 @@ public class StepDetailsFragment
         app.changeMediaSource(recipe,stepIndex);
         refreshViews();
         showToast();
+        tellListener();
+    }
+
+
+    private void tellListener(){
+        if(listener!=null){
+            listener.onStepChanged(stepIndex);
+        }
     }
 
     @Override
     public SimpleExoPlayer getPlayer() {
+
         return app.getExoPlayer(recipe, stepIndex);
     }
 
@@ -167,6 +186,25 @@ public class StepDetailsFragment
         stepIndex = isNext? stepIndex+1 : stepIndex-1;
         if(stepIndex>stepCount-1){stepIndex=0;}
         else if (stepIndex<0){stepIndex = stepCount-1;}
+    }
+
+    /**
+     * Interface is used to tell parent activity (if it's not a tablet) that user changed the step
+     * by tapping on playback control buttons (next/previous). Therefore we can change appbar title
+     * there.
+     */
+    interface StepChangeListener{
+        void onStepChanged(int stepIndex);
+    }
+
+    @VisibleForTesting
+    public Recipe getRecipe(){
+        return recipe;
+    }
+
+    @VisibleForTesting
+    public int getStepIndex(){
+        return stepIndex;
     }
 
 }

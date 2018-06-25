@@ -64,7 +64,7 @@ https://guides.codepath.com/android/ripple-animation
                     app:layout_constraintRight_toRightOf="parent"
                     android:alpha="0.2"
                     android:layout_margin="16dp"
-                    />
+                    android:contentDescription="@string/cd_recipe_image" />
 
         </android.support.constraint.ConstraintLayout>
 

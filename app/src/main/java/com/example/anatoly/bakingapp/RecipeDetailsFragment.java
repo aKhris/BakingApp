@@ -75,7 +75,7 @@ public class RecipeDetailsFragment extends Fragment {
      */
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
@@ -113,7 +113,6 @@ public class RecipeDetailsFragment extends Fragment {
     /**
      * Force recipe's step selection.
      * Used for initial selection of first step when user opens the recipe activity on a tablet.
-     * @param position
      */
     public void selectItem(int position){
         adapter.selectItem(position);

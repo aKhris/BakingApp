@@ -11,6 +11,13 @@
         android:layout_marginBottom="8dp"
         android:text="@string/configure" />
 
+    <ProgressBar
+        android:id="@+id/pb_loading_bar_wca"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_select_recipes_wca"
         android:layout_width="match_parent"
@@ -18,7 +25,7 @@
         android:layout_weight="1"/>
 
     <Button
-        android:id="@+id/add_button"
+        android:id="@+id/add_button_wca"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

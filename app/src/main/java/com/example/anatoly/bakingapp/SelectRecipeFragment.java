@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 
 import com.example.anatoly.bakingapp.Adapters.RecipesListAdapter;
 import com.example.anatoly.bakingapp.Model.Recipe;
-import com.example.anatoly.bakingapp.Utils.JsonUtils;
 
 import java.util.ArrayList;
 
@@ -30,8 +29,11 @@ public class SelectRecipeFragment extends Fragment
 {
     @BindView(R.id.rv_select_recipes) RecyclerView recipesRecyclerView;
 
-    private static final String ARG_RECIPES = "recipes";
+
+    private static final String BUNDLE_SCROLL_POSITION = "scroll_position";
+    private static final String BUNDLE_RECIPES = "recipes";
     private int mColumnCount=1;
+    @Nullable private SimpleIdlingResource idlingResource;
 
     ArrayList<Recipe> recipes;
     SelectRecipeListener listener;
@@ -44,6 +46,10 @@ public class SelectRecipeFragment extends Fragment
         this.recipes = recipes;
     }
 
+    public void setIdlingResource(@Nullable SimpleIdlingResource idlingResource) {
+        this.idlingResource = idlingResource;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -54,18 +60,18 @@ public class SelectRecipeFragment extends Fragment
         }
 
     }
-
+    @SuppressWarnings("unchecked")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mColumnCount = getResources().getInteger(R.integer.columns_count);  //=3 for tablets otherwise =1
-        if (savedInstanceState != null && savedInstanceState.containsKey(ARG_RECIPES)) {
-            recipes = (ArrayList<Recipe>) savedInstanceState.getSerializable(ARG_RECIPES);
+        mColumnCount = getResources().getInteger(R.integer.columns_count);  //1 or 2 or 3 depending on a value in integers.xml
+        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_RECIPES)) {
+            recipes = (ArrayList<Recipe>) savedInstanceState.getSerializable(BUNDLE_RECIPES);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_select_recipe, container, false);
@@ -76,6 +82,16 @@ public class SelectRecipeFragment extends Fragment
         recipesRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mColumnCount, RecyclerView.VERTICAL, false));
         recipesRecyclerView.setHasFixedSize(true);
         recipesRecyclerView.setAdapter(adapter);
+        if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_SCROLL_POSITION)) {
+            int position = savedInstanceState.getInt(BUNDLE_SCROLL_POSITION);
+            recipesRecyclerView.getLayoutManager().scrollToPosition(position);
+        }
+
+        //Setting idlingResource state to true
+        //since we are ready for clicking on recyclerview items
+        if (idlingResource != null) {
+            idlingResource.setIdleState(true);
+        }
         return view;
     }
 
@@ -91,6 +107,8 @@ public class SelectRecipeFragment extends Fragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(ARG_RECIPES, recipes);
+        outState.putSerializable(BUNDLE_RECIPES, recipes);
+        outState.putInt(BUNDLE_SCROLL_POSITION,
+                ((GridLayoutManager)recipesRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition());
     }
 }

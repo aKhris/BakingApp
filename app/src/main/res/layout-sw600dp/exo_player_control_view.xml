@@ -11,12 +11,13 @@
     <ImageButton
         android:id="@id/exo_pause"
         style="@style/ExoMediaButton.Pause"
+        android:contentDescription="@string/exo_controls_pause_description"
         />
 
     <ImageButton
         android:id="@id/exo_play"
         style="@style/ExoMediaButton.Play"
-
+        android:contentDescription="@string/exo_controls_play_description"
         />
 
     <TextView
@@ -56,7 +57,8 @@
         android:paddingRight="8dp"
         android:includeFontPadding="false"
         android:textColor="#FFBEBEBE"
-        />
+        android:paddingEnd="8dp"
+        android:paddingStart="4dp" />
 
 
 

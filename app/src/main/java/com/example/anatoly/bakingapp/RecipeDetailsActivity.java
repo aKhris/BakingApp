@@ -1,24 +1,33 @@
 package com.example.anatoly.bakingapp;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
 import com.example.anatoly.bakingapp.Model.Recipe;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class RecipeDetailsActivity extends AppCompatActivity
         implements RecipeDetailsFragment.RecipeDetailsListener
 {
+    @BindView(R.id.nsv_steps_scroll) NestedScrollView scrollView;
+    @Nullable @BindView(R.id.fl_step_details_container) FrameLayout stepDetailsContainer;
+
+    private final static String BUNDLE_SCROLL_POSITION = "scroll_position";
 
     public static final String ARG_RECIPE = "recipe";
     private static final String RECIPE_DETAILS_FRAGMENT_TAG = "recipe_details_fragment";
-    private static final String STEP_DETAILS_FRAGMENT_TAG = "step_details_fragment";
+    public static final String STEP_DETAILS_FRAGMENT_TAG = "step_details_fragment";
 
-    private Recipe recipe;
+    @Nullable private Recipe recipe;
 
-    FrameLayout stepDetailsContainer;
+
 
 
 
@@ -26,15 +35,16 @@ public class RecipeDetailsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
-        stepDetailsContainer = findViewById(R.id.fl_step_details_container);
+        ButterKnife.bind(this);
+
         recipe = (Recipe) getIntent().getSerializableExtra(ARG_RECIPE);
+        if(recipe==null){return;}   //May be so under test
+
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setTitle(recipe.getName());
         }
 
 
-
-        if(!isTablet()){return;}
         RecipeDetailsFragment recipeDetailsFragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         recipeDetailsFragment = (RecipeDetailsFragment) fragmentManager.findFragmentByTag(RECIPE_DETAILS_FRAGMENT_TAG);
@@ -46,6 +56,18 @@ public class RecipeDetailsActivity extends AppCompatActivity
                     .replace(R.id.fl_recipe_details_container, recipeDetailsFragment, RECIPE_DETAILS_FRAGMENT_TAG)
                     .commit();
         }
+
+        if(savedInstanceState!=null && savedInstanceState.containsKey(BUNDLE_SCROLL_POSITION)){
+                final int[] scrollCoordinates = savedInstanceState.getIntArray(BUNDLE_SCROLL_POSITION);
+                if (scrollCoordinates != null) {
+                    scrollView.post(new Runnable() {
+                        public void run() {
+                            scrollView.scrollTo(scrollCoordinates[0], scrollCoordinates[1]);
+                        }
+                    });
+                }
+        }
+
     }
 
     public boolean isTablet(){
@@ -80,6 +102,13 @@ public class RecipeDetailsActivity extends AppCompatActivity
             intent.putExtra(StepDetailsActivity.ARG_STEP_INDEX, stepIndex);
             startActivity(intent);
         }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putIntArray(BUNDLE_SCROLL_POSITION, new int[]{scrollView.getScrollX(), scrollView.getScrollY()});
     }
 
     @Override

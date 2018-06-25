@@ -27,18 +27,34 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    implementation "com.mikepenz:aboutlibraries:6.0.9"
 
     implementation 'com.google.android.exoplayer:exoplayer-core:2.8.1'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.1'
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.8.1'
-
+    implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.2'
 
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
 
+
+
+    /** To make tests with recyclerview.
+     * got it here:
+     * http://guides.codepath.com/android/UI-Testing-with-Espresso#interacting-with-a-recyclerview
+     */
+    androidTestImplementation('com.android.support.test.espresso:espresso-contrib:2.2') {
+        // Necessary to avoid version conflicts
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude module: 'recyclerview-v7'
+    }
 
 }

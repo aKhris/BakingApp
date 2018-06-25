@@ -6,22 +6,19 @@
     <FrameLayout
         android:id="@+id/video_player_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/sv_step_description"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHeight_max="400dp"
         />
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
+    <ScrollView
+        android:id="@+id/sv_step_description"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5"
-        />
-    <ScrollView android:layout_width="match_parent"
         android:layout_height="0dp"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        app:layout_constraintTop_toBottomOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/video_player_fragment_container"
         app:layout_constraintBottom_toBottomOf="parent"
         >
         <TextView

@@ -7,6 +7,7 @@ import com.example.anatoly.bakingapp.Base.VideoFullscreenActivity;
 import com.example.anatoly.bakingapp.Model.Recipe;
 
 public class StepDetailsActivity extends VideoFullscreenActivity
+    implements StepDetailsFragment.StepChangeListener
          {
 
     //String tag for fragment
@@ -44,21 +45,27 @@ public class StepDetailsActivity extends VideoFullscreenActivity
             stepIndex = savedInstanceState.getInt(BUNDLE_STEP_INDEX);
         }
 
+        setAppBarTitle();
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         stepDetailsFragment = (StepDetailsFragment) fragmentManager.findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
         if(stepDetailsFragment==null){
             stepDetailsFragment = new StepDetailsFragment();
             stepDetailsFragment.setParameters(recipe, stepIndex);
-                        fragmentManager
+                    fragmentManager
                     .beginTransaction()
                     .replace(R.id.fl_step_details_container, stepDetailsFragment, STEP_DETAILS_FRAGMENT_TAG)
                     .commit();
         }
     }
 
+    private void setAppBarTitle(){
+        if(getSupportActionBar()!=null) {
+            getSupportActionBar().setTitle(recipe.getSteps().get(stepIndex).getShortDescription());
+        }
+         }
 
-
-    /**
+             /**
      * If activity is being destroyed during orientation change we still want to use
      * the same SimpleExoPlayer (that is stored in App class).
      * If activity is going to destroy completely we have to release that player.
@@ -70,9 +77,10 @@ public class StepDetailsActivity extends VideoFullscreenActivity
         if (isFinishing()) {
             // do stuff
             ((App)(getApplicationContext())).releasePlayer();
-        } else {
-            //It's an orientation change.
         }
+//        else {
+            //It's an orientation change.
+//        }
     }
 
              @Override
@@ -81,4 +89,9 @@ public class StepDetailsActivity extends VideoFullscreenActivity
                  outState.putInt(BUNDLE_STEP_INDEX, stepIndex);
              }
 
+             @Override
+             public void onStepChanged(int stepIndex) {
+                this.stepIndex = stepIndex;
+                setAppBarTitle();
+            }
          }
