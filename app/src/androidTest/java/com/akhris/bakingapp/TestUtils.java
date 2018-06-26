@@ -1,8 +1,8 @@
-package com.example.anatoly.bakingapp;
+package com.akhris.bakingapp;
 
-import com.example.anatoly.bakingapp.Model.Ingredient;
-import com.example.anatoly.bakingapp.Model.Recipe;
-import com.example.anatoly.bakingapp.Model.Step;
+import com.akhris.bakingapp.Model.Ingredient;
+import com.akhris.bakingapp.Model.Recipe;
+import com.akhris.bakingapp.Model.Step;
 
 import java.util.ArrayList;
 import java.util.List;

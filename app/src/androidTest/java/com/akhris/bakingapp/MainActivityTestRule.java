@@ -1,4 +1,4 @@
-package com.example.anatoly.bakingapp;
+package com.akhris.bakingapp;
 
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.intent.rule.IntentsTestRule;

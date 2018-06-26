@@ -13,4 +13,6 @@
     <string name="cd_player_artwork">Player artwork</string>
     <string name="cd_no_video">No video</string>
     <string name="cd_current_step">Current step</string>
+    <string name="cd_widget_settings">Widget Settings</string>
+    <string name="update_widget_button_text">Update widget</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.anatoly.bakingapp;
+package com.akhris.bakingapp;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -8,9 +8,9 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v7.widget.RecyclerView;
 
-import com.example.anatoly.bakingapp.Adapters.StepsListAdapter;
-import com.example.anatoly.bakingapp.Model.Recipe;
-import com.example.anatoly.bakingapp.Model.Step;
+import com.akhris.bakingapp.Adapters.StepsListAdapter;
+import com.akhris.bakingapp.Model.Recipe;
+import com.akhris.bakingapp.Model.Step;
 
 import org.junit.Before;
 import org.junit.Rule;

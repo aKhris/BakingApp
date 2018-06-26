@@ -1,4 +1,4 @@
-package com.example.anatoly.bakingapp;
+package com.akhris.bakingapp;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -8,8 +8,8 @@ import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v7.widget.RecyclerView;
 
-import com.example.anatoly.bakingapp.Adapters.RecipesListAdapter;
-import com.example.anatoly.bakingapp.Model.Recipe;
+import com.akhris.bakingapp.Adapters.RecipesListAdapter;
+import com.akhris.bakingapp.Model.Recipe;
 
 import org.junit.After;
 import org.junit.Before;

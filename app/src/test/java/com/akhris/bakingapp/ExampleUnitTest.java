@@ -1,4 +1,4 @@
-package com.example.anatoly.bakingapp;
+package com.akhris.bakingapp;
 
 import org.junit.Test;
 
