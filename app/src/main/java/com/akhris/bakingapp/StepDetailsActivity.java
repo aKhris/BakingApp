@@ -66,23 +66,15 @@ public class StepDetailsActivity extends VideoFullscreenActivity
         }
          }
 
-             /**
-     * If activity is being destroyed during orientation change we still want to use
-     * the same SimpleExoPlayer (that is stored in App class).
-     * If activity is going to destroy completely we have to release that player.
-     * Solution got here: https://stackoverflow.com/a/9621078
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isFinishing()) {
-            // do stuff
-            ((App)(getApplicationContext())).releasePlayer();
-        }
-//        else {
-            //It's an orientation change.
-//        }
-    }
+
+//             @Override
+//             protected void onPause() {
+//                super.onPause();
+//                     ((App)(getApplicationContext())).releasePlayer();
+//             }
+
+
+
 
              @Override
              protected void onSaveInstanceState(Bundle outState) {

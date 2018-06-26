@@ -16,8 +16,9 @@ import android.widget.Toast;
 
 import com.akhris.bakingapp.Model.Recipe;
 import com.akhris.bakingapp.Model.Step;
-import com.akhris.bakingapp.R;
+import com.akhris.bakingapp.Utils.PlayerUtils;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,8 +35,15 @@ public class StepDetailsFragment
 
     private static final String BUNDLE_STEP_INDEX = "step_index";
     private static final String BUNDLE_RECIPE = "recipe";
+    private static final String BUNDLE_PLAYER_POSITION = "player_position";
+    private static final String BUNDLE_PLAY_WHEN_READY = "play_when_ready";
 
     private static final String VIDEO_FRAGMENT_TAG = "video_fragment_tag";
+
+    private SimpleExoPlayer mPlayer;
+    private MediaSource mediaSource;
+    private long mPlayerPosition;
+    private boolean mPlayWhenReady;
 
     /**
      * listener is null on a tablet
@@ -46,9 +54,6 @@ public class StepDetailsFragment
     private Recipe recipe;
     private int stepIndex;
 
-    private App app;
-
-
     public StepDetailsFragment() {
         // Required empty public constructor
     }
@@ -56,16 +61,9 @@ public class StepDetailsFragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.app = (App)context.getApplicationContext();
         if(context instanceof StepChangeListener){
             this.listener = (StepChangeListener) context;
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        this.app = null;
     }
 
     /**
@@ -84,6 +82,8 @@ public class StepDetailsFragment
         if(savedInstanceState!=null){
             this.recipe = (Recipe) savedInstanceState.getSerializable(BUNDLE_RECIPE);
             this.stepIndex = savedInstanceState.getInt(BUNDLE_STEP_INDEX, 0);
+            this.mPlayerPosition = savedInstanceState.getLong(BUNDLE_PLAYER_POSITION, 0L);
+            this.mPlayWhenReady = savedInstanceState.getBoolean(BUNDLE_PLAY_WHEN_READY, false);
         }
     }
 
@@ -99,6 +99,8 @@ public class StepDetailsFragment
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_step_details, container, false);
         ButterKnife.bind(this, rootView);
+
+
 
         FragmentManager fragmentManager = getChildFragmentManager();
 
@@ -131,7 +133,7 @@ public class StepDetailsFragment
     
     private void showToast(){
         if(stepDescription==null) {
-            Toast.makeText(app, getCurrentStep().getShortDescription(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getCurrentStep().getShortDescription(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -144,16 +146,18 @@ public class StepDetailsFragment
         super.onSaveInstanceState(outState);
         outState.putSerializable(BUNDLE_RECIPE, recipe);
         outState.putInt(BUNDLE_STEP_INDEX, stepIndex);
+        outState.putLong(BUNDLE_PLAYER_POSITION, mPlayerPosition);
+        outState.putBoolean(BUNDLE_PLAY_WHEN_READY, mPlayWhenReady);
     }
 
     public void actualizeMediaSource(){
-        app.changeMediaSource(recipe, stepIndex);
+        changeMediaSource();
     }
 
     @Override
     public void onNextClick() {
         changeStepIndex(true);
-        app.changeMediaSource(recipe,stepIndex);
+        changeMediaSource();
         refreshViews();
         showToast();
         tellListener();
@@ -162,7 +166,7 @@ public class StepDetailsFragment
     @Override
     public void onPrevClick() {
         changeStepIndex(false);
-        app.changeMediaSource(recipe,stepIndex);
+        changeMediaSource();
         refreshViews();
         showToast();
         tellListener();
@@ -177,16 +181,52 @@ public class StepDetailsFragment
 
     @Override
     public SimpleExoPlayer getPlayer() {
-
-        return app.getExoPlayer(recipe, stepIndex);
+        if(mPlayer==null){
+            initPlayer();
+        }
+        return mPlayer;
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+    }
 
     private void changeStepIndex(boolean isNext){
         int stepCount = recipe.getSteps().size();
         stepIndex = isNext? stepIndex+1 : stepIndex-1;
         if(stepIndex>stepCount-1){stepIndex=0;}
         else if (stepIndex<0){stepIndex = stepCount-1;}
+    }
+
+    private void initPlayer(){
+        if (mPlayer==null) {
+            mPlayer = PlayerUtils.makeExoPlayer(getContext());
+        }
+
+        if(mediaSource==null) {
+            changeMediaSource();
+            mPlayer.seekTo(mPlayerPosition);
+            mPlayer.setPlayWhenReady(mPlayWhenReady);
+        }
+    }
+
+    private void changeMediaSource(){
+        mediaSource = PlayerUtils.makeMediaSource(getContext(), recipe.getSteps().get(stepIndex).getVideoUrl());
+        getPlayer().prepare(mediaSource, true, false);
+    }
+
+    public void releasePlayer(){
+        if (mPlayer != null) {
+            mPlayerPosition = mPlayer.getContentPosition();
+            mPlayWhenReady = mPlayer.getPlayWhenReady();
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
+            mediaSource = null;
+        }
     }
 
     /**

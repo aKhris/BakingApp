@@ -13,11 +13,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.akhris.bakingapp.Utils.PlayerUtils;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -37,9 +39,9 @@ public class VideoPlayerFragment extends Fragment
 
     private static final String BUNDLE_NO_VIDEO = "no_video";
 
-
     VideoPlayerCallbacks listener;
     private boolean noVideo;
+
 
     @BindView(R.id.pv_video_player) PlayerView playerView;
     @BindView(R.id.iv_no_video) ImageView noVideoImageView;
@@ -176,10 +178,13 @@ public class VideoPlayerFragment extends Fragment
         this.noVideo = noVideo;
     }
 
+
+
     interface VideoPlayerCallbacks {
         void onNextClick();
         void onPrevClick();
         SimpleExoPlayer getPlayer();
     }
+
 
 }
