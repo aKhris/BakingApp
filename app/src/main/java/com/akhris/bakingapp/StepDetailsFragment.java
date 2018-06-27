@@ -19,6 +19,7 @@ import com.akhris.bakingapp.Model.Step;
 import com.akhris.bakingapp.Utils.PlayerUtils;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -181,18 +182,9 @@ public class StepDetailsFragment
 
     @Override
     public SimpleExoPlayer getPlayer() {
-        if(mPlayer==null){
-            initPlayer();
-        }
         return mPlayer;
     }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        releasePlayer();
-    }
 
     private void changeStepIndex(boolean isNext){
         int stepCount = recipe.getSteps().size();
@@ -201,23 +193,13 @@ public class StepDetailsFragment
         else if (stepIndex<0){stepIndex = stepCount-1;}
     }
 
-    private void initPlayer(){
-        if (mPlayer==null) {
-            mPlayer = PlayerUtils.makeExoPlayer(getContext());
-        }
-
-        if(mediaSource==null) {
-            changeMediaSource();
-            mPlayer.seekTo(mPlayerPosition);
-            mPlayer.setPlayWhenReady(mPlayWhenReady);
-        }
-    }
 
     private void changeMediaSource(){
         mediaSource = PlayerUtils.makeMediaSource(getContext(), recipe.getSteps().get(stepIndex).getVideoUrl());
         getPlayer().prepare(mediaSource, true, false);
     }
 
+    @Override
     public void releasePlayer(){
         if (mPlayer != null) {
             mPlayerPosition = mPlayer.getContentPosition();
@@ -227,6 +209,21 @@ public class StepDetailsFragment
             mPlayer = null;
             mediaSource = null;
         }
+    }
+
+    @Override
+    public void initPlayer(PlayerView playerView) {
+        if (mPlayer==null) {
+            mPlayer = PlayerUtils.makeExoPlayer(getContext());
+        }
+
+        if(mediaSource==null) {
+            changeMediaSource();
+            mPlayer.seekTo(mPlayerPosition);
+            mPlayer.setPlayWhenReady(mPlayWhenReady);
+        }
+
+        playerView.setPlayer(mPlayer);
     }
 
     /**

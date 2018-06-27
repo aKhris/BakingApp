@@ -92,6 +92,7 @@ public class VideoPlayerFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
+        listener.initPlayer(playerView);
         listener.getPlayer().addListener(this);
     }
 
@@ -99,6 +100,7 @@ public class VideoPlayerFragment extends Fragment
     public void onPause() {
         super.onPause();
         listener.getPlayer().removeListener(this);
+        listener.releasePlayer();
     }
 
     @Override
@@ -107,7 +109,7 @@ public class VideoPlayerFragment extends Fragment
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_video_player, container, false);
         ButterKnife.bind(this, rootView);
-        playerView.setPlayer(listener.getPlayer());
+//        playerView.setPlayer(listener.getPlayer());
         setNoVideo(noVideo);
         return rootView;
     }
@@ -184,6 +186,8 @@ public class VideoPlayerFragment extends Fragment
         void onNextClick();
         void onPrevClick();
         SimpleExoPlayer getPlayer();
+        void releasePlayer();
+        void initPlayer(PlayerView playerView);
     }
 
 
