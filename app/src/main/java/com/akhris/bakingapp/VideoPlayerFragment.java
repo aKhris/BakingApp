@@ -13,11 +13,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.akhris.bakingapp.Utils.PlayerUtils;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -36,10 +38,17 @@ public class VideoPlayerFragment extends Fragment
 {
 
     private static final String BUNDLE_NO_VIDEO = "no_video";
+    private static final String BUNDLE_PLAYER_POSITION = "player_position";
+    private static final String BUNDLE_PLAY_WHEN_READY = "play_when_ready";
 
     VideoPlayerCallbacks listener;
-    private boolean noVideo;
+    private boolean mNoVideo;
 
+    private SimpleExoPlayer mPlayer;
+    private MediaSource mMediaSource;
+
+    private long mPlayerPosition;
+    private boolean mPlayWhenReady;
 
     @BindView(R.id.pv_video_player) PlayerView playerView;
     @BindView(R.id.iv_no_video) ImageView noVideoImageView;
@@ -51,11 +60,13 @@ public class VideoPlayerFragment extends Fragment
     @OnClick(R.id.exo_next_custom)
     public void onNextClick(){
         listener.onNextClick();
+        actualizeMediaSource();
     }
     @Optional
     @OnClick(R.id.exo_prev_custom)
     public void onPrevClick(){
         listener.onPrevClick();
+        actualizeMediaSource();
     }
 
     public VideoPlayerFragment() {
@@ -75,30 +86,64 @@ public class VideoPlayerFragment extends Fragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(BUNDLE_NO_VIDEO, noVideo);
+        outState.putBoolean(BUNDLE_NO_VIDEO, mNoVideo);
+        outState.putLong(BUNDLE_PLAYER_POSITION, mPlayerPosition);
+        outState.putBoolean(BUNDLE_PLAY_WHEN_READY, mPlayWhenReady);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState!=null
-                && savedInstanceState.containsKey(BUNDLE_NO_VIDEO)) {
-            noVideo = savedInstanceState.getBoolean(BUNDLE_NO_VIDEO);
+        if(savedInstanceState!=null) {
+            mNoVideo = savedInstanceState.getBoolean(BUNDLE_NO_VIDEO);
+            mPlayerPosition = savedInstanceState.getLong(BUNDLE_PLAYER_POSITION, 0L);
+            mPlayWhenReady = savedInstanceState.getBoolean(BUNDLE_PLAY_WHEN_READY, false);
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        listener.initPlayer(playerView);
-        listener.getPlayer().addListener(this);
+        initPlayer();
+        mPlayer.addListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        listener.getPlayer().removeListener(this);
-        listener.releasePlayer();
+        mPlayer.removeListener(this);
+        releasePlayer();
+    }
+
+    private void releasePlayer(){
+        if (mPlayer != null) {
+            mPlayerPosition = mPlayer.getContentPosition();
+            mPlayWhenReady = mPlayer.getPlayWhenReady();
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
+            mMediaSource = null;
+        }
+    }
+
+    private void actualizeMediaSource(){
+        mMediaSource = listener.getMediaSource();
+        mPlayer.prepare(mMediaSource, true, false);
+    }
+
+    private void initPlayer() {
+        if (mPlayer==null) {
+            mPlayer = PlayerUtils.makeExoPlayer(getContext());
+        }
+
+        if(mMediaSource ==null) {
+            mMediaSource = listener.getMediaSource();
+            mPlayer.prepare(mMediaSource, true, false);
+            mPlayer.seekTo(mPlayerPosition);
+            mPlayer.setPlayWhenReady(mPlayWhenReady);
+        }
+
+        playerView.setPlayer(mPlayer);
     }
 
     @Override
@@ -108,7 +153,7 @@ public class VideoPlayerFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_video_player, container, false);
         ButterKnife.bind(this, rootView);
 //        playerView.setPlayer(listener.getPlayer());
-        setNoVideo(noVideo);
+        setNoVideo(mNoVideo);
         return rootView;
     }
 
@@ -175,7 +220,7 @@ public class VideoPlayerFragment extends Fragment
         } else {
             noVideoImageView.setVisibility(View.INVISIBLE);
         }
-        this.noVideo = noVideo;
+        this.mNoVideo = noVideo;
     }
 
 
@@ -183,9 +228,7 @@ public class VideoPlayerFragment extends Fragment
     interface VideoPlayerCallbacks {
         void onNextClick();
         void onPrevClick();
-        SimpleExoPlayer getPlayer();
-        void releasePlayer();
-        void initPlayer(PlayerView playerView);
+        MediaSource getMediaSource();
     }
 
 

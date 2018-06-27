@@ -1,15 +1,14 @@
 package com.akhris.bakingapp;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
 import com.akhris.bakingapp.Model.Recipe;
-import com.akhris.bakingapp.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

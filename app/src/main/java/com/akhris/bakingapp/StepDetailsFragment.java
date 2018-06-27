@@ -17,9 +17,7 @@ import android.widget.Toast;
 import com.akhris.bakingapp.Model.Recipe;
 import com.akhris.bakingapp.Model.Step;
 import com.akhris.bakingapp.Utils.PlayerUtils;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.ui.PlayerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,15 +34,9 @@ public class StepDetailsFragment
 
     private static final String BUNDLE_STEP_INDEX = "step_index";
     private static final String BUNDLE_RECIPE = "recipe";
-    private static final String BUNDLE_PLAYER_POSITION = "player_position";
-    private static final String BUNDLE_PLAY_WHEN_READY = "play_when_ready";
+
 
     private static final String VIDEO_FRAGMENT_TAG = "video_fragment_tag";
-
-    private SimpleExoPlayer mPlayer;
-    private MediaSource mediaSource;
-    private long mPlayerPosition;
-    private boolean mPlayWhenReady;
 
     /**
      * listener is null on a tablet
@@ -83,8 +75,6 @@ public class StepDetailsFragment
         if(savedInstanceState!=null){
             this.recipe = (Recipe) savedInstanceState.getSerializable(BUNDLE_RECIPE);
             this.stepIndex = savedInstanceState.getInt(BUNDLE_STEP_INDEX, 0);
-            this.mPlayerPosition = savedInstanceState.getLong(BUNDLE_PLAYER_POSITION, 0L);
-            this.mPlayWhenReady = savedInstanceState.getBoolean(BUNDLE_PLAY_WHEN_READY, false);
         }
     }
 
@@ -147,18 +137,15 @@ public class StepDetailsFragment
         super.onSaveInstanceState(outState);
         outState.putSerializable(BUNDLE_RECIPE, recipe);
         outState.putInt(BUNDLE_STEP_INDEX, stepIndex);
-        outState.putLong(BUNDLE_PLAYER_POSITION, mPlayerPosition);
-        outState.putBoolean(BUNDLE_PLAY_WHEN_READY, mPlayWhenReady);
     }
 
     public void actualizeMediaSource(){
-        changeMediaSource();
+
     }
 
     @Override
     public void onNextClick() {
         changeStepIndex(true);
-        changeMediaSource();
         refreshViews();
         showToast();
         tellListener();
@@ -167,10 +154,14 @@ public class StepDetailsFragment
     @Override
     public void onPrevClick() {
         changeStepIndex(false);
-        changeMediaSource();
         refreshViews();
         showToast();
         tellListener();
+    }
+
+    @Override
+    public MediaSource getMediaSource() {
+        return PlayerUtils.makeMediaSource(getContext(), recipe.getSteps().get(stepIndex).getVideoUrl());
     }
 
 
@@ -180,10 +171,6 @@ public class StepDetailsFragment
         }
     }
 
-    @Override
-    public SimpleExoPlayer getPlayer() {
-        return mPlayer;
-    }
 
 
     private void changeStepIndex(boolean isNext){
@@ -194,37 +181,6 @@ public class StepDetailsFragment
     }
 
 
-    private void changeMediaSource(){
-        mediaSource = PlayerUtils.makeMediaSource(getContext(), recipe.getSteps().get(stepIndex).getVideoUrl());
-        getPlayer().prepare(mediaSource, true, false);
-    }
-
-    @Override
-    public void releasePlayer(){
-        if (mPlayer != null) {
-            mPlayerPosition = mPlayer.getContentPosition();
-            mPlayWhenReady = mPlayer.getPlayWhenReady();
-            mPlayer.stop();
-            mPlayer.release();
-            mPlayer = null;
-            mediaSource = null;
-        }
-    }
-
-    @Override
-    public void initPlayer(PlayerView playerView) {
-        if (mPlayer==null) {
-            mPlayer = PlayerUtils.makeExoPlayer(getContext());
-        }
-
-        if(mediaSource==null) {
-            changeMediaSource();
-            mPlayer.seekTo(mPlayerPosition);
-            mPlayer.setPlayWhenReady(mPlayWhenReady);
-        }
-
-        playerView.setPlayer(mPlayer);
-    }
 
     /**
      * Interface is used to tell parent activity (if it's not a tablet) that user changed the step
